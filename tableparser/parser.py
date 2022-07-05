@@ -220,8 +220,7 @@ def get_table(file_name: str):
         month_obj_for_s2 = []
 
     return Table(table_name, subjects_obj) 
-                
-table = get_table("~/Code/SummerPractic/Data/График 5 курс_01.05.01_21.xls")
+               
 
 def get_all_data(table: Table):
     print(table.name)
@@ -239,8 +238,6 @@ def get_all_data(table: Table):
                     print(w.n_prac)
                 print("")
         print("="*50)
-
-get_all_data(table)
 
 
 
