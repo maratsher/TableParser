@@ -6,6 +6,5 @@ parser.get_all_data(table)
 
 
 
-print(*parser.table.get_subjects_name)
+print(*table.get_subjects_name())
 
-print(parser.table.get_subject("Математический практикум").get_semestr("Осенний семестр").get_month("октябрь"))

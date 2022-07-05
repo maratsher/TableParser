@@ -123,7 +123,7 @@ class Table:
         self.name = name
         self.subjects = subjects
 
-    def get_subjects_name(self):
+    def get_subjects_name(self) -> list:
         return [s.name for s in self.subjects]
 
     def get_subject(self, name):

@@ -224,10 +224,19 @@ def get_table(file_name: str):
 
 def get_all_data(table: Table):
     print(table.name)
-    print("="*50)
+
+    
     subs = [_ for _ in table.subjects]
     for s in subs:
+        print("="*50)
         print(s.name)
+        for p in s.plans:
+            print(p.name)
+            print("КСР: ", p.ksd)
+            print("лекции: ", p.lecs)
+            print("практические: ", p.pracs)
+            print("лабораторные: ", p.labs)
+
         print("="*50)
         for sem in s.semestrs:
             print(sem.name)
