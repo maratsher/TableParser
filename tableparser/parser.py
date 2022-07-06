@@ -71,8 +71,9 @@ def get_subject_name_cells(df: pd.DataFrame,rows: int, col_num = 0 ) -> list[Cel
             numbers.append(df.iloc[row, 0])
     return subjects_name_cells
 
+
 def get_plans(df: pd.DataFrame, rows: int, columns: int,
-              subjects_name_cells: list[Cell]) -> tuple[list[Cell], tuple[list, list, list, list]]:
+              subjects_name_cells: list[Cell]) -> tuple[list[Cell], tuple[list, list, list, list], list]:
 
     #Получение опорных точек с значением КСР
     ref_points_plan = []
@@ -87,6 +88,7 @@ def get_plans(df: pd.DataFrame, rows: int, columns: int,
     lecs = []
     pracs = []
     labs = []
+    cf_for_subjects = []
 
     i = 0
     for p in ref_points_plan:
@@ -94,6 +96,8 @@ def get_plans(df: pd.DataFrame, rows: int, columns: int,
         lecs.append([])
         pracs.append([])
         labs.append([])
+        if(i >= 1):
+            cf_for_subjects.append([])
         for r in subjects_name_cells:
             v = r+p
             v.val = df.iloc[v.row, v.col]
@@ -115,10 +119,13 @@ def get_plans(df: pd.DataFrame, rows: int, columns: int,
             else:
                 lab_v = df.iloc[v.row, v.col+3]
                 labs[i].append(Cell(v.row, v.col+3, lab_v))
+
+            if(i >= 1):
+               cf_for_subjects[i-1].append((df.iloc[v.row, v.col+4], df.iloc[v.row, v.col+5]))
          
         i+=1 
 
-    return ref_points_plan, (ksrs, lecs, pracs, labs)
+    return ref_points_plan, (ksrs, lecs, pracs, labs), cf_for_subjects
 
 def get_name(df: pd.DataFrame, columns: int):
     for col in range(columns):
@@ -144,9 +151,10 @@ def get_table(file_name: str):
     subjects_name_cells = get_subject_name_cells(df, rows)
 
 
-    ref_points_plan, plans = get_plans(df, rows, columns, subjects_name_cells)
+    ref_points_plan, plans, cf_for_subjects = get_plans(df, rows, columns, subjects_name_cells)
     if(len(ref_points_plan) == 3):
         two_sem = True
+
 
     #Получение ячеек с номeрами недель для перво
     col_line_for_s1_start = ref_points_plan[0].col+3
@@ -212,10 +220,14 @@ def get_table(file_name: str):
                                               weeks))
                 weeks = []
 
-        subjects_obj.append(Subject(name_sub,plans_obj_for_subject[n_subject],
-                [Semestr("Осенний семестр", month_obj_for_s1),
-                Semestr("Весенний семестр", month_obj_for_s2)],
-                (True, True)))
+        if(two_sem):
+            subjects_obj.append(Subject(name_sub,plans_obj_for_subject[n_subject],
+                    [Semestr("Осенний семестр", month_obj_for_s1, cf_for_subjects[0][n_subject]),
+                    Semestr("Весенний семестр", month_obj_for_s2, cf_for_subjects[1][n_subject])]))
+        else:
+            subjects_obj.append(Subject(name_sub,plans_obj_for_subject[n_subject],
+                    [Semestr("Осенний семестр", month_obj_for_s1, cf_for_subjects[0][n_subject]),
+                    Semestr("Весенний семестр", month_obj_for_s2, (None,None))]))
         month_obj_for_s1 = []
         month_obj_for_s2 = []
 
@@ -230,6 +242,7 @@ def get_all_data(table: Table):
     for s in subs:
         print("="*50)
         print(s.name)
+        print("="*50)
         for p in s.plans:
             print(p.name)
             print("КСР: ", p.ksd)
@@ -237,7 +250,6 @@ def get_all_data(table: Table):
             print("практические: ", p.pracs)
             print("лабораторные: ", p.labs)
 
-        print("="*50)
         for sem in s.semestrs:
             print(sem.name)
             for m in sem.months:
@@ -245,8 +257,8 @@ def get_all_data(table: Table):
                 for w in m.weeks:
                     print(w.n_lec, end=" ")
                     print(w.n_prac)
-                print("")
-        print("="*50)
+            print("Форма контроля: ", sem.control_form)
+            print("")
 
 
 

@@ -1,7 +1,5 @@
 from typing import Literal
 
-from numpy import subtract
-
 PLAN_TYPES = Literal["Годовой план", "Осенний семестр", "Весенний семестр"]
 SEMESTR_TYPES = Literal["Осенний семестр", "Весенний семестр"]
 MONTHS_TYPE = Literal[
@@ -18,7 +16,7 @@ MONTHS_TYPE = Literal[
     "август"]
 
 PLANS = ["Годовой план", "Осенний семестр", "Весенний семестр"]
-
+CONTROL_FORMS = ["экз", "зачет"]
 MONTHS = [
     "сентябрь",    
     "октябрь",
@@ -73,11 +71,13 @@ class Plan:
 
 class Semestr:
 
-    def __init__(self, name: SEMESTR_TYPES, months: list[Month]) -> None:
+    def __init__(self, name: SEMESTR_TYPES, months: list[Month],
+                 control_form: tuple) -> None:
         self.name = name
         months = [m for m in months if len(m.weeks) != 0]
         self.months = months
         self.num_months = len(months)
+        self.control_form = control_form
 
 
     def get_months_name(self):
@@ -92,12 +92,11 @@ class Semestr:
 
 class Subject:
 
-    def __init__(self, name: str, plans: list[Plan], semestrs: list[Semestr], control_form: tuple[bool]) -> None:
+    def __init__(self, name: str, plans: list[Plan], semestrs: list[Semestr]) -> None:
         self.name = name
         self.plans = plans
         semestrs = [s for s in semestrs if len(s.months) != 0]
         self.semestrs = semestrs
-        self.control_form = control_form
 
     def get_semestrs_list(self):
         return [sem.name for sem in self.semestrs]
