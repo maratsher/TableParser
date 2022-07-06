@@ -50,7 +50,7 @@ class Week:
         self.n_prac = n_prac
 
 class Month:
-    def __init__(self, name: MONTHS_TYPE, num_week: int, weeks: list[Week],) -> None:
+    def __init__(self, name: MONTHS_TYPE, num_week: int, weeks: list[Week]) -> None:
         self.name = name
         self.num_week = num_week
         self.weeks = weeks
