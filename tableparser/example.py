@@ -1,6 +1,7 @@
-from parser import get_table, get_all_data
+from parser import get_data
+from pprint import pprint
 
-table = get_table("~/Code/SummerPractic/Data/График 3 курс_01.03.01_21.xls")
 
-get_all_data(table)
+data = get_data("~/Code/SummerPractic/Data/График 3 курс_01.03.01_21.xls")
 
+pprint(data)
